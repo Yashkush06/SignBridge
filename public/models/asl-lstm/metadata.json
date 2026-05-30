@@ -1,0 +1,30 @@
+{
+  "seq_len": 30,
+  "num_features": 63,
+  "num_classes": 20,
+  "val_accuracy": 0.2916666567325592,
+  "val_loss": 2.8711605072021484,
+  "epochs_trained": 25,
+  "label_map": {
+    "0": "book",
+    "1": "drink",
+    "2": "computer",
+    "3": "before",
+    "4": "chair",
+    "5": "go",
+    "6": "clothes",
+    "7": "who",
+    "8": "candy",
+    "9": "cousin",
+    "10": "deaf",
+    "11": "fine",
+    "12": "help",
+    "13": "no",
+    "14": "thin",
+    "15": "walk",
+    "16": "year",
+    "17": "yes",
+    "18": "all",
+    "19": "black"
+  }
+}

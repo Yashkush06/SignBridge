@@ -1,0 +1,10 @@
+mediapipe>=0.10.14
+opencv-python>=4.9.0
+numpy>=1.26.0
+tensorflow
+tensorflowjs
+requests>=2.31.0
+yt-dlp>=2024.4.9
+tqdm>=4.66.0
+pandas>=2.2.0
+scikit-learn>=1.4.0

@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SignBridge Design System — Tailwind v4 Theme Configuration
+   Inspired by: Stripe, Linear, Vercel, Notion
+   ============================================================ */
+
+@theme inline {
+  /* --- Brand Colors --- */
+  --color-brand-50: #EFF6FF;
+  --color-brand-100: #DBEAFE;
+  --color-brand-200: #BFDBFE;
+  --color-brand-300: #93C5FD;
+  --color-brand-400: #60A5FA;
+  --color-brand-500: #1F6FEB;
+  --color-brand-600: #1A5EC4;
+  --color-brand-700: #15509E;
+  --color-brand-800: #104078;
+  --color-brand-900: #0A2A52;
+
+  /* --- Neutral Scale --- */
+  --color-neutral-0: #FFFFFF;
+  --color-neutral-25: #FAFBFC;
+  --color-neutral-50: #F6F7F9;
+  --color-neutral-100: #ECEEF1;
+  --color-neutral-200: #D8DCE2;
+  --color-neutral-300: #B5BBC6;
+  --color-neutral-400: #8B95A5;
+  --color-neutral-500: #667085;
+  --color-neutral-600: #4B5468;
+  --color-neutral-700: #363E4F;
+  --color-neutral-800: #242B38;
+  --color-neutral-900: #151922;
+  --color-neutral-950: #0B0F1A;
+
+  /* --- Semantic Colors --- */
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  --color-success-dark: #065F46;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-warning-dark: #92400E;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-error-dark: #991B1B;
+  --color-info: #0EA5E9;
+  --color-info-light: #E0F2FE;
+  --color-info-dark: #075985;
+
+  /* --- Surface Colors (used via CSS vars for theme switching) --- */
+  --color-surface: var(--bg);
+  --color-surface-secondary: var(--bg-secondary);
+  --color-surface-tertiary: var(--bg-tertiary);
+  --color-surface-elevated: var(--bg-elevated);
+
+  /* --- Typography --- */
+  --font-sans: var(--font-geist-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+  --font-heading: var(--font-geist-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* --- Spacing (4px grid) --- */
+  --spacing-px: 1px;
+  --spacing-0: 0px;
+  --spacing-0_5: 2px;
+  --spacing-1: 4px;
+  --spacing-1_5: 6px;
+  --spacing-2: 8px;
+  --spacing-2_5: 10px;
+  --spacing-3: 12px;
+  --spacing-3_5: 14px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-14: 56px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+
+  /* --- Border Radius --- */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
+  --shadow-focus: 0 0 0 2px var(--color-brand-500);
+}
+
+/* ============================================================
+   CSS Custom Properties for Theme Switching
+   ============================================================ */
+
+:root {
+  --bg: #FFFFFF;
+  --bg-secondary: #F6F7F9;
+  --bg-tertiary: #ECEEF1;
+  --bg-elevated: #FFFFFF;
+  --fg: #151922;
+  --fg-secondary: #4B5468;
+  --fg-tertiary: #667085;
+  --fg-muted: #8B95A5;
+  --border: #E2E5E9;
+  --border-secondary: #ECEEF1;
+  --ring: #1F6FEB;
+  --input-bg: #FFFFFF;
+  --input-border: #D8DCE2;
+  --sidebar-bg: #FAFBFC;
+  --sidebar-border: #ECEEF1;
+  --overlay: rgba(0, 0, 0, 0.4);
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0B0F1A;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1E2533;
+  --bg-elevated: #151922;
+  --fg: #F0F1F3;
+  --fg-secondary: #B5BBC6;
+  --fg-tertiary: #8B95A5;
+  --fg-muted: #667085;
+  --border: #242B38;
+  --border-secondary: #1E2533;
+  --ring: #60A5FA;
+  --input-bg: #151922;
+  --input-border: #242B38;
+  --sidebar-bg: #0D1117;
+  --sidebar-border: #1E2533;
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   Focus & Accessibility
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background-color: var(--color-brand-100);
+  color: var(--color-brand-900);
+}
+
+.dark ::selection {
+  background-color: var(--color-brand-900);
+  color: var(--color-brand-100);
+}
+
+/* ============================================================
+   Scrollbar Styling
+   ============================================================ */
+
+:root {
+  scrollbar-color: var(--color-neutral-300) transparent;
+  scrollbar-width: thin;
+}
+
+.dark {
+  scrollbar-color: var(--color-neutral-700) transparent;
+}
+
+/* ============================================================
+   Skeleton Loading Animation
+   ============================================================ */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ============================================================
+   Smooth Transitions
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ============================================================
+   Typography Utilities
+   ============================================================ */
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* ============================================================
+   Camera Feed Styles
+   ============================================================ */
+
+.camera-feed {
+  background: var(--color-neutral-950);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.camera-feed video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.camera-feed canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+/* ============================================================
+   Recording Indicator
+   ============================================================ */
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.recording-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-error);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
