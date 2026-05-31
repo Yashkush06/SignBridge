@@ -440,10 +440,10 @@ export default function TranslatorPage() {
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex flex-col gap-4 w-full max-w-[1400px] mx-auto h-full overflow-hidden"
+      className="flex flex-col gap-4 w-full max-w-[1400px] mx-auto h-auto lg:h-full lg:overflow-hidden"
     >
       {/* Header Row */}
-      <div className="flex items-center justify-between shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold tracking-tight">Live Translator</h1>
           <StatusIndicator status={surfaceStatus} />
@@ -472,13 +472,13 @@ export default function TranslatorPage() {
       </div>
 
       {/* Main Workspace (Strictly non-scrolling split layout) */}
-      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0 lg:overflow-hidden">
         
         {/* Left Side: Camera & Compact Sentence Builder */}
         <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
           
           {/* Camera Frame (Flexible, Meet-style layout) */}
-          <div className="flex-1 relative bg-[var(--color-neutral-950)] rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center min-h-[280px]">
+          <div className="aspect-video md:flex-1 relative bg-[var(--color-neutral-950)] rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center min-h-[240px]">
             {/* Status Badges Overlay */}
             <div className="absolute top-4 left-4 z-10 flex gap-2">
               {!isModelReady && webcamState === "active" && (
@@ -651,27 +651,27 @@ export default function TranslatorPage() {
             )}
 
             {/* Controls bottom Row */}
-            <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--bg-secondary)] flex items-center gap-2 flex-wrap">
-              <Button variant="outline" size="sm" onClick={handleAddSpace} disabled={!sentenceText || sentenceText.endsWith(" ")} className="h-8 text-xs gap-1">
-                <Hand className="w-3 h-3" /> Space
+            <div className="px-3 py-2.5 border-t border-[var(--border)] bg-[var(--bg-secondary)] grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 w-full">
+              <Button variant="outline" size="sm" onClick={handleAddSpace} disabled={!sentenceText || sentenceText.endsWith(" ")} className="h-8 text-[11px] px-1.5 sm:px-3 gap-1 w-full sm:w-auto">
+                <Hand className="w-3.5 h-3.5 shrink-0" /> Space
               </Button>
-              <Button variant="outline" size="sm" onClick={handleDeleteLetter} disabled={!sentenceText} className="h-8 text-xs gap-1">
-                <Delete className="w-3 h-3" /> Backspace
+              <Button variant="outline" size="sm" onClick={handleDeleteLetter} disabled={!sentenceText} className="h-8 text-[11px] px-1.5 sm:px-3 gap-1 w-full sm:w-auto">
+                <Delete className="w-3.5 h-3.5 shrink-0" /> Backspace
               </Button>
-              <Button variant="outline" size="sm" onClick={handleDeleteWord} disabled={!sentenceText} className="h-8 text-xs gap-1">
-                <Eraser className="w-3 h-3" /> Word
+              <Button variant="outline" size="sm" onClick={handleDeleteWord} disabled={!sentenceText} className="h-8 text-[11px] px-1.5 sm:px-3 gap-1 w-full sm:w-auto">
+                <Eraser className="w-3.5 h-3.5 shrink-0" /> Word
               </Button>
-              <div className="h-4 w-px bg-[var(--border)] mx-1" />
-              <Button variant="outline" size="sm" onClick={handleCopyText} disabled={!sentenceText.trim()} className="h-8 text-xs gap-1">
-                {copied ? <Check className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
+              <div className="hidden sm:block h-4 w-px bg-[var(--border)] mx-1" />
+              <Button variant="outline" size="sm" onClick={handleCopyText} disabled={!sentenceText.trim()} className="h-8 text-[11px] px-1.5 sm:px-3 gap-1 w-full sm:w-auto">
+                {copied ? <Check className="w-3.5 h-3.5 text-success shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0" />}
                 {copied ? "Copied!" : "Copy"}
               </Button>
-              <Button variant="outline" size="sm" onClick={handleSpeak} disabled={!sentenceText.trim()} className="h-8 text-xs gap-1">
-                <Volume2 className="w-3 h-3" /> Speak
+              <Button variant="outline" size="sm" onClick={handleSpeak} disabled={!sentenceText.trim()} className="h-8 text-[11px] px-1.5 sm:px-3 gap-1 w-full sm:w-auto">
+                <Volume2 className="w-3.5 h-3.5 shrink-0" /> Speak
               </Button>
-              <div className="flex-1" />
-              <Button variant="ghost" size="sm" onClick={handleClearSentence} disabled={!sentenceText} className="h-8 text-xs text-error hover:text-error/90 hover:bg-error/5 gap-1">
-                <Trash2 className="w-3 h-3" /> Clear
+              <div className="hidden sm:block flex-1" />
+              <Button variant="ghost" size="sm" onClick={handleClearSentence} disabled={!sentenceText} className="h-8 text-[11px] px-1.5 sm:px-3 text-error hover:text-error/90 hover:bg-error/5 gap-1 w-full sm:w-auto justify-center sm:justify-start">
+                <Trash2 className="w-3.5 h-3.5 shrink-0" /> Clear
               </Button>
             </div>
           </Card>

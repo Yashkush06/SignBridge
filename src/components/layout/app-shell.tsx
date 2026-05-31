@@ -44,8 +44,8 @@ export function AppShell({ children }: AppShellProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <TopNav />
-        <main className="flex-1 overflow-hidden">
-          <div className="container mx-auto p-4 md:p-6 max-w-7xl h-full flex flex-col min-h-0">
+        <main className="flex-1 overflow-y-auto lg:overflow-hidden">
+          <div className="container mx-auto p-4 md:p-6 max-w-7xl h-auto lg:h-full flex flex-col min-h-0">
             {children}
           </div>
         </main>
