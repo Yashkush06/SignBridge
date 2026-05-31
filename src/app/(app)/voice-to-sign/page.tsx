@@ -409,13 +409,13 @@ export default function VoiceToSignPage() {
 
           {/* Video display */}
           <div className="flex-1 flex items-center justify-center relative">
-            {/* The video element is ALWAYS mounted to prevent layout shift, flickering, and reload lag */}
+            {/* The video element is ALWAYS mounted and kept in normal flow to prevent layout collapse */}
             <video
               ref={videoRef}
               src={currentLetter && currentLetter !== " " ? `/alphabet/${currentLetter}.mp4` : undefined}
               className={cn(
                 "w-full h-full object-contain aspect-[4/3] transition-opacity duration-150",
-                currentLetter && currentLetter !== " " && isVideoLoaded ? "opacity-100" : "opacity-0 absolute pointer-events-none"
+                currentLetter && currentLetter !== " " && isVideoLoaded ? "opacity-100" : "opacity-0 pointer-events-none"
               )}
               onLoadedMetadata={() => setIsVideoLoaded(true)}
               loop={!isAnimating}
@@ -433,25 +433,27 @@ export default function VoiceToSignPage() {
 
             {/* Space / Pause / Idle display */}
             {(!currentLetter || currentLetter === " " || !isVideoLoaded) && (
-              currentLetter === " " ? (
-                <div className="text-center">
-                  <div className="text-6xl text-white/20 font-bold mb-2">
-                    ⎵
+              <div className="absolute inset-0 flex items-center justify-center">
+                {currentLetter === " " ? (
+                  <div className="text-center">
+                    <div className="text-6xl text-white/20 font-bold mb-2">
+                      ⎵
+                    </div>
+                    <p className="text-sm text-white/40 uppercase tracking-widest">
+                      Space
+                    </p>
                   </div>
-                  <p className="text-sm text-white/40 uppercase tracking-widest">
-                    Space
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center px-6">
-                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-                    <Hand className="w-8 h-8 text-white/30" />
+                ) : (
+                  <div className="text-center px-6">
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+                      <Hand className="w-8 h-8 text-white/30" />
+                    </div>
+                    <p className="text-white/40 text-sm">
+                      {currentLetter ? "Loading Sign..." : "ASL signs will appear here as you speak"}
+                    </p>
                   </div>
-                  <p className="text-white/40 text-sm">
-                    {currentLetter ? "Loading Sign..." : "ASL signs will appear here as you speak"}
-                  </p>
-                </div>
-              )
+                )}
+              </div>
             )}
           </div>
 
