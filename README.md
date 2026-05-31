@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/SignBridgelogo.png" alt="SignBridge" width="220" />
+  <img src="public/SignBridgelogo.png" alt="SignBridge" width="450" />
   <h1>SignBridge</h1>
   <p><strong>Real-time ASL translation — fully in the browser, no account required.</strong></p>
   <p>🚀 <strong><a href="https://sign-bridge-topaz.vercel.app/">Try the Live Application on Vercel</a></strong></p>
