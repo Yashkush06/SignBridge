@@ -2,8 +2,10 @@
   <img src="https://raw.githubusercontent.com/Yashkush06/SignBridge/main/public/SignBridgelogo.png" alt="SignBridge" width="180" />
   <h1>SignBridge</h1>
   <p><strong>Real-time ASL translation — fully in the browser, no account required.</strong></p>
+  <p>🚀 <strong><a href="https://sign-bridge-topaz.vercel.app/">Try the Live Application on Vercel</a></strong></p>
 
   <p>
+    <a href="https://sign-bridge-topaz.vercel.app/"><img src="https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=flat&logo=vercel&logoColor=white" alt="Live Demo" /></a>
     <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.2-black?logo=nextdotjs&logoColor=white" alt="Next.js" /></a>
     <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /></a>
     <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>

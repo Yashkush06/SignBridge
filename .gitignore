@@ -44,3 +44,5 @@ next-env.d.ts
 /asl_alphabet_train/
 .kiro/
 
+
+.vercel
