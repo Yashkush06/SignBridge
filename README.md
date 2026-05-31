@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/SignBridgelogo.png" alt="SignBridge" width="72" />
+  <img src="https://raw.githubusercontent.com/Yashkush06/SignBridge/main/public/SignBridgelogo.png" alt="SignBridge" width="180" />
   <h1>SignBridge</h1>
   <p><strong>Real-time ASL translation — fully in the browser, no account required.</strong></p>
 
