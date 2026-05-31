@@ -209,9 +209,9 @@ export default function VoiceToSignPage() {
       : "idle";
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4">
+    <div className="flex flex-col h-auto lg:h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4">
       {/* Header & Controls Row */}
-      <div className="flex items-center justify-between shrink-0 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
         <div>
           <h1 className="text-xl md:text-2xl font-semibold tracking-tight flex items-center gap-3">
             <span>
@@ -383,7 +383,7 @@ export default function VoiceToSignPage() {
         </Card>
 
         {/* Right: ASL Video Display */}
-        <Card className="flex flex-col min-h-0 bg-black overflow-hidden relative border-[var(--border)] shadow-sm">
+        <Card className="flex flex-col min-h-[300px] md:min-h-0 bg-black overflow-hidden relative border-[var(--border)] shadow-sm">
           {/* Top badges */}
           <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
             <Badge

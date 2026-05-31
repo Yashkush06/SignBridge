@@ -114,10 +114,10 @@ export default function TextToSignPage() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4"
+      className="flex flex-col h-auto lg:h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4"
     >
       {/* Header Row */}
-      <div className="flex items-center justify-between shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold tracking-tight">Text to Sign</h1>
           <StatusIndicator status={isAnimating ? "processing" : "idle"} />
@@ -125,7 +125,7 @@ export default function TextToSignPage() {
       </div>
 
       {/* Main split viewport workspace */}
-      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0 lg:overflow-hidden">
         
         {/* Left Side: Video Player & Compact Sentence Builder */}
         <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
