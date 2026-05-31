@@ -5,20 +5,17 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
 import { useAuthStore } from "@/store/auth-store";
+import { selectActiveNavItem, type NavItem } from "@/lib/navigation";
 import {
-  LayoutDashboard,
   Video,
   Type,
   Mic,
   Clock,
   BarChart3,
-  Settings,
-  Shield,
-  LogOut,
   ChevronRight
 } from "lucide-react";
 
-const navigationGroups = [
+const navigationGroups: { title: string; items: NavItem[] }[] = [
   {
     title: "Workspace",
     items: [
@@ -37,6 +34,10 @@ const navigationGroups = [
 
 ];
 
+// Flatten every group's items into a single NavItem[] so the active-item
+// selector resolves exactly one active item across the whole sidebar (Req 8.5).
+const navItems: NavItem[] = navigationGroups.flatMap((group) => group.items);
+
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -46,6 +47,12 @@ export function Sidebar() {
     setUser(null, null);
     router.push("/login");
   };
+
+  // Compute the single active item once across ALL nav items (Req 8.5). The
+  // longest-prefix selector resolves nested routes to exactly one item, so the
+  // previous per-item `startsWith` logic (and its `/translator` special-case)
+  // is no longer needed.
+  const activeItem = selectActiveNavItem(pathname, navItems);
 
   return (
     <aside className="flex h-full w-60 flex-col bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)] select-none">
@@ -65,7 +72,7 @@ export function Sidebar() {
             </p>
             <div className="space-y-0.5">
               {group.items.map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/translator" && pathname.startsWith(item.href));
+                const isActive = activeItem?.href === item.href;
                 return (
                   <Link
                     key={item.name}

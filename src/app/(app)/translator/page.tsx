@@ -12,6 +12,7 @@ import type { HistoryEntry } from "@/lib/ml/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusIndicator, type SurfaceStatus } from "@/components/ui/status-indicator";
 import { exportService } from "@/lib/services/export-service";
 import { cn } from "@/lib/cn";
 import { motion, AnimatePresence } from "framer-motion";
@@ -423,6 +424,17 @@ export default function TranslatorPage() {
 
   if (!mounted) return null;
 
+  // Map the page's live state to a defined SurfaceStatus (Req 8.3):
+  // - recording: camera active, detecting, and the model is ready
+  // - processing: camera active and detecting while the model is still loading
+  // - idle: camera off or detection paused
+  const surfaceStatus: SurfaceStatus =
+    webcamState === "active" && isDetecting
+      ? isModelReady
+        ? "recording"
+        : "processing"
+      : "idle";
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -434,16 +446,7 @@ export default function TranslatorPage() {
       <div className="flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold tracking-tight">Live Translator</h1>
-          {webcamState === "active" && isDetecting ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error/10 text-error text-xs font-medium animate-pulse">
-              <div className="w-1.5 h-1.5 rounded-full bg-error" />
-              Recording
-            </div>
-          ) : (
-            <Badge variant="outline" className="text-[var(--fg-tertiary)] py-0.5">
-              Idle
-            </Badge>
-          )}
+          <StatusIndicator status={surfaceStatus} />
         </div>
 
         {/* Model Selector */}
@@ -475,13 +478,13 @@ export default function TranslatorPage() {
         <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
           
           {/* Camera Frame (Flexible, Meet-style layout) */}
-          <div className="flex-1 relative bg-black rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10 flex items-center justify-center min-h-[280px]">
+          <div className="flex-1 relative bg-[var(--color-neutral-950)] rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center min-h-[280px]">
             {/* Status Badges Overlay */}
             <div className="absolute top-4 left-4 z-10 flex gap-2">
               {!isModelReady && webcamState === "active" && (
                 <Badge
                   variant="warning"
-                  className="bg-warning/90 text-white border-0 shadow-sm backdrop-blur-md px-2.5 py-1 text-xs"
+                  className="bg-[var(--bg-elevated)] shadow-sm px-2.5 py-1 text-xs"
                 >
                   Loading Model...
                 </Badge>
@@ -489,7 +492,7 @@ export default function TranslatorPage() {
               {modelError && (
                 <Badge
                   variant="error"
-                  className="bg-error/90 text-white border-0 shadow-sm backdrop-blur-md px-2.5 py-1 text-xs"
+                  className="bg-[var(--bg-elevated)] shadow-sm px-2.5 py-1 text-xs"
                 >
                   <AlertCircle className="w-3 h-3 mr-1" />
                   Model Error
@@ -501,7 +504,7 @@ export default function TranslatorPage() {
               {webcamState === "active" && (
                 <Badge
                   variant="outline"
-                  className="bg-black/50 text-white border-white/20 backdrop-blur-md text-xs py-0.5"
+                  className="bg-[var(--bg-elevated)] shadow-sm text-xs py-0.5"
                 >
                   {storeFps} FPS
                 </Badge>
@@ -525,11 +528,11 @@ export default function TranslatorPage() {
               </>
             ) : (
               <div className="flex flex-col items-center justify-center p-6 text-center max-w-sm">
-                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
-                  <Camera className="w-7 h-7 text-white/50" />
+                <div className="w-16 h-16 rounded-full bg-[var(--color-neutral-800)] flex items-center justify-center mb-4">
+                  <Camera className="w-7 h-7 text-[var(--color-neutral-400)]" />
                 </div>
-                <p className="font-semibold text-white text-base mb-1">Camera is Off</p>
-                <p className="text-xs text-white/60 mb-6 text-balance">
+                <p className="font-semibold text-[var(--color-neutral-0)] text-base mb-1">Camera is Off</p>
+                <p className="text-xs text-[var(--color-neutral-400)] mb-6 text-balance">
                   {webcamError || "Turn on your webcam to begin translating American Sign Language in real-time."}
                 </p>
                 <Button onClick={startCamera} variant="primary" className="rounded-full shadow-md">
@@ -541,7 +544,7 @@ export default function TranslatorPage() {
 
             {/* Meet-style Floating Action Bar Overlay (Always accessible) */}
             {webcamState === "active" && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md rounded-full px-4 py-2 border border-white/10 shadow-2xl transition-all hover:bg-black/75">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-[var(--bg-elevated)] rounded-full px-4 py-2 border border-[var(--border)] shadow-lg transition-colors">
                 <Button
                   variant={webcamState === "active" ? "danger" : "primary"}
                   onClick={handleToggleCamera}
@@ -562,13 +565,14 @@ export default function TranslatorPage() {
                     <><Play className="w-3.5 h-3.5 mr-1.5" /> Resume</>
                   )}
                 </Button>
-                <div className="h-4 w-px bg-white/20 mx-1" />
+                <div className="h-4 w-px bg-[var(--border)] mx-1" />
                 <Button
                   variant="ghost"
                   onClick={handleClear}
                   size="sm"
-                  className="rounded-full h-9 w-9 p-0 text-white/70 hover:text-white hover:bg-white/10 transition-transform hover:scale-110 active:scale-95"
+                  className="rounded-full h-9 w-9 p-0 text-[var(--fg-secondary)] hover:text-[var(--fg)] transition-transform hover:scale-110 active:scale-95"
                   title="Clear log"
+                  aria-label="Clear log"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -576,8 +580,9 @@ export default function TranslatorPage() {
                   variant="ghost"
                   onClick={handleExport}
                   size="sm"
-                  className="rounded-full h-9 w-9 p-0 text-white/70 hover:text-white hover:bg-white/10 transition-transform hover:scale-110 active:scale-95"
+                  className="rounded-full h-9 w-9 p-0 text-[var(--fg-secondary)] hover:text-[var(--fg)] transition-transform hover:scale-110 active:scale-95"
                   title="Export session"
+                  aria-label="Export session"
                 >
                   <Download className="w-4 h-4" />
                 </Button>

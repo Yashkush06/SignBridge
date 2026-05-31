@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusIndicator, type SurfaceStatus } from "@/components/ui/status-indicator";
 import {
   Mic,
   MicOff,
@@ -197,13 +198,26 @@ export default function VoiceToSignPage() {
   const fullTranscript = (transcript + " " + interimTranscript).trim();
   const queueWordCount = animationQueue.length;
 
+  // Map the page's live state to a defined SurfaceStatus (Req 8.3):
+  // - recording: the microphone is actively listening
+  // - processing: signs are being animated out of the queue
+  // - idle: neither listening nor animating
+  const surfaceStatus: SurfaceStatus = isListening
+    ? "recording"
+    : isAnimating
+      ? "processing"
+      : "idle";
+
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4">
       {/* Header & Controls Row */}
       <div className="flex items-center justify-between shrink-0 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold tracking-tight">
-            <span className="text-brand-500">Voice</span> to Sign Language
+          <h1 className="text-xl md:text-2xl font-semibold tracking-tight flex items-center gap-3">
+            <span>
+              <span className="text-brand-500">Voice</span> to Sign Language
+            </span>
+            <StatusIndicator status={surfaceStatus} />
           </h1>
           <p className="text-[var(--fg-secondary)] mt-1 text-xs md:text-sm">
             Speak into your microphone to translate words into ASL.
@@ -401,7 +415,7 @@ export default function VoiceToSignPage() {
                   autoPlay
                 />
                 {/* Letter overlay */}
-                <div className="absolute top-16 left-4 w-14 h-14 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center font-bold text-3xl text-white shadow-lg border border-white/20">
+                <div className="absolute top-16 left-4 w-14 h-14 bg-[var(--bg-elevated)] rounded-xl flex items-center justify-center font-bold text-3xl text-[var(--fg)] shadow-md border border-[var(--border)]">
                   {currentLetter}
                 </div>
               </>

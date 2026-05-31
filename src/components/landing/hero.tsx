@@ -1,8 +1,12 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, type Transition } from 'framer-motion';
+import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
+import { Button } from '@/components/ui/button';
+import { motionVariants, useReducedMotionVariants } from '@/lib/motion';
+import { headingClass } from '@/lib/typography';
 
 /* 
   MediaPipe 21 Hand Landmarks absolute coordinates mapped 
@@ -36,21 +40,41 @@ const handConnections = [
 ];
 
 export function Hero() {
+  // Single entrance reveal sourced from the motion catalog. Under reduced
+  // motion the resolver collapses initial === animate with duration 0, so the
+  // content renders in its final visible state immediately (Req 4.8, 5.1).
+  const reveal = useReducedMotionVariants(motionVariants.sectionReveal);
+  const reduced = reveal.transition.duration === 0;
+
+  // Staggered entrance delay per item, matching the sibling landing sections.
+  // Collapses to 0 under reduced motion so everything appears at once. The
+  // catalog `ease` is a cubic-bezier tuple; it is narrowed to Framer Motion's
+  // `Transition["ease"]` so each motion element accepts it cleanly.
+  const itemTransition = (index: number): Transition => ({
+    duration: reveal.transition.duration,
+    ease: reveal.transition.ease as Transition['ease'],
+    delay: reduced ? 0 : index * 0.08,
+  });
+
   return (
     <section
       id="hero"
       className="relative pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden bg-[var(--bg)]"
     >
-      {/* Soft warm light glow in the center */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[450px] bg-gradient-to-b from-brand-500/5 to-transparent blur-[120px] rounded-full pointer-events-none" />
+      {/* Decorative single-hue brand gradient (varies only in opacity; no blur, no glow). */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-brand-500/5 to-transparent"
+      />
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           {/* Elegant brand logo above the badge */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            initial={reveal.initial}
+            whileInView={reveal.animate}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={itemTransition(0)}
             className="mb-6 flex justify-center"
           >
             <Logo size="lg" />
@@ -58,13 +82,14 @@ export function Hero() {
 
           {/* Subtle announcement badge */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            initial={reveal.initial}
+            whileInView={reveal.animate}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={itemTransition(1)}
           >
             <span
               id="hero-badge"
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-50/50 dark:bg-brand-950/20 text-brand-600 dark:text-brand-400 text-[11px] font-medium border border-brand-100 dark:border-brand-900/50"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-50/50 dark:bg-brand-950/20 text-brand-600 dark:text-brand-400 text-xs font-medium border border-brand-100 dark:border-brand-900/50"
             >
               <Sparkles className="w-3 h-3" />
               ASL alphabet detection is now live
@@ -74,10 +99,14 @@ export function Hero() {
           {/* Heading */}
           <motion.h1
             id="hero-heading"
-            className="mt-6 text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--fg)] text-balance max-w-4xl leading-[1.1]"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            initial={reveal.initial}
+            whileInView={reveal.animate}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={itemTransition(2)}
+            className={headingClass(
+              'h1',
+              'mt-6 md:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--fg)] text-balance max-w-4xl leading-[1.1]'
+            )}
           >
             Sign Language. <span className="text-brand-500 font-medium">Translated.</span>
           </motion.h1>
@@ -85,38 +114,35 @@ export function Hero() {
           {/* Subtitle */}
           <motion.p
             id="hero-subtitle"
+            initial={reveal.initial}
+            whileInView={reveal.animate}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={itemTransition(3)}
             className="mt-6 text-base md:text-lg text-[var(--fg-secondary)] max-w-xl text-pretty font-light leading-relaxed"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
           >
             A minimal, browser-native sign language translator. Powered by on-device computer vision for complete privacy. Zero setup required.
           </motion.p>
 
-          {/* Call-to-action */}
+          {/* Call-to-action: primary + secondary on one alignment axis, single gap token */}
           <motion.div
-            className="mt-8 flex items-center justify-center"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            initial={reveal.initial}
+            whileInView={reveal.animate}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={itemTransition(4)}
+            className="mt-8 flex flex-wrap items-center justify-center gap-4"
           >
-            <a
-              id="hero-cta-primary"
-              href="/translator"
-              className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-all hover:shadow-lg hover:shadow-brand-500/10 group"
-            >
-              Start Translating
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
+            <Button asChild variant="primary" size="lg">
+              <Link id="hero-cta-primary" href="/translator">
+                Start Translating
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link id="hero-cta-secondary" href="#how-it-works">
+                See how it works
+              </Link>
+            </Button>
           </motion.div>
-
-          {/* Subtle Bottom Glow */}
-          <motion.div
-            className="mt-16 w-full max-w-3xl h-1 bg-gradient-to-r from-transparent via-brand-500/20 to-transparent blur-sm"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          />
         </div>
       </div>
     </section>

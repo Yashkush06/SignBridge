@@ -11,6 +11,10 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { motionVariants, useReducedMotionVariants } from '@/lib/motion';
+import { bodyClass, headingClass } from '@/lib/typography';
+
 interface Feature {
   icon: LucideIcon;
   title: string;
@@ -56,77 +60,74 @@ const features: Feature[] = [
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4,  },
-  },
-};
-
 export function Features() {
+  // Section-reveal entrance from the shared motion catalog, resolved for the
+  // active reduced-motion preference. Under reduced motion the resolver yields
+  // the final visible state instantly (Req 4.8, 5.1).
+  const reveal = useReducedMotionVariants(motionVariants.sectionReveal);
+
   return (
     <section id="features" className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section header */}
         <motion.div
           className="text-center mb-14"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={reveal.initial}
+          whileInView={reveal.animate}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
+          transition={reveal.transition}
         >
           <h2
             id="features-heading"
-            className="text-3xl font-semibold tracking-tight text-[var(--fg)]"
+            className={headingClass('h2', 'font-semibold tracking-tight text-[var(--fg)]')}
           >
             Built for Real Communication
           </h2>
-          <p className="text-[var(--fg-secondary)] text-center max-w-2xl mx-auto mt-3">
+          <p
+            className={bodyClass(
+              'text-[var(--fg-secondary)] text-center max-w-2xl mx-auto mt-3'
+            )}
+          >
             Everything you need to bridge the gap between sign language and
             spoken language — fast, accurate, and accessible.
           </p>
         </motion.div>
 
         {/* Feature cards */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-        >
-          {features.map((feature) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <motion.div
                 key={feature.title}
-                variants={itemVariants}
-                className="bg-[var(--bg-secondary)] border rounded-lg p-5 hover:border-brand-200 transition-colors group"
+                initial={reveal.initial}
+                whileInView={reveal.animate}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ ...reveal.transition, delay: index * 0.06 }}
               >
-                <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-500 flex items-center justify-center mb-3 border border-brand-100 group-hover:bg-brand-100 transition-colors">
-                  <Icon className="h-[18px] w-[18px]" />
-                </div>
-                <h3 className="text-sm font-semibold text-[var(--fg)] mb-1">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-[var(--fg-secondary)] leading-relaxed">
-                  {feature.description}
-                </p>
+                <Card className="group h-full transition-colors hover:border-brand-200">
+                  <CardHeader>
+                    <div className="w-9 h-9 rounded-md bg-brand-50 text-brand-500 flex items-center justify-center border border-brand-100 transition-colors group-hover:bg-brand-100">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <CardTitle className={headingClass('h3', 'text-[var(--fg)]')}>
+                      {feature.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p
+                      className={bodyClass(
+                        'text-sm text-[var(--fg-secondary)] leading-relaxed'
+                      )}
+                    >
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

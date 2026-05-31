@@ -68,7 +68,7 @@ export function Testimonials() {
           >
             Trusted by Professionals
           </h2>
-          <p className="text-[var(--fg-secondary)] text-center max-w-2xl mx-auto mt-3">
+          <p className="text-[var(--fg-secondary)] text-center max-w-prose mx-auto mt-3">
             Healthcare workers, educators, and enterprise teams rely on
             SignBridge every day.
           </p>
@@ -86,7 +86,7 @@ export function Testimonials() {
             <motion.div
               key={t.name}
               variants={itemVariants}
-              className="bg-[var(--bg-secondary)] border rounded-lg p-6 flex flex-col"
+              className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-2xl p-6 flex flex-col"
             >
               <Quote className="h-5 w-5 text-brand-300 mb-4 shrink-0" />
               <blockquote className="text-sm text-[var(--fg-secondary)] leading-relaxed flex-1">

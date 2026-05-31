@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Logo } from '@/components/ui/logo';
+import { Button } from '@/components/ui/button';
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -27,7 +28,7 @@ export function Navbar() {
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color] duration-300',
         scrolled
-          ? 'bg-[var(--bg)]/80 backdrop-blur-lg border-b'
+          ? 'bg-[var(--bg)] border-b'
           : 'bg-transparent border-b border-transparent'
       )}
     >
@@ -38,7 +39,7 @@ export function Navbar() {
         </a>
 
         {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8">
+        <ul className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
@@ -53,14 +54,12 @@ export function Navbar() {
         </ul>
 
         {/* Desktop actions */}
-        <div className="hidden md:flex items-center gap-3">
-          <a
-            id="nav-launch-app"
-            href="/translator"
-            className="inline-flex items-center justify-center h-9 px-4 rounded-md bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-colors"
-          >
-            Launch App
-          </a>
+        <div className="hidden md:flex items-center gap-6">
+          <Button asChild size="sm">
+            <a id="nav-launch-app" href="/translator">
+              Launch App
+            </a>
+          </Button>
         </div>
 
         {/* Mobile hamburger */}
@@ -87,24 +86,23 @@ export function Navbar() {
             transition={{ duration: 0.2 }}
             className="md:hidden overflow-hidden border-b bg-[var(--bg)]"
           >
-            <div className="px-4 sm:px-6 py-4 flex flex-col gap-3">
+            <div className="px-4 sm:px-6 py-4 flex flex-col gap-6">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="text-sm text-[var(--fg-secondary)] hover:text-[var(--fg)] transition-colors py-1.5"
+                  className="text-sm text-[var(--fg-secondary)] hover:text-[var(--fg)] transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
                 </a>
               ))}
               <hr className="border-[var(--border)]" />
-              <a
-                href="/translator"
-                className="inline-flex items-center justify-center h-9 px-4 rounded-md bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-colors w-full"
-              >
-                Launch App
-              </a>
+              <Button asChild size="sm" className="w-full">
+                <a href="/translator">
+                  Launch App
+                </a>
+              </Button>
             </div>
           </motion.div>
         )}

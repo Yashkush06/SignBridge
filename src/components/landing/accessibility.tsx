@@ -62,7 +62,7 @@ export function AccessibilitySection() {
             >
               Accessibility at Every Level
             </h2>
-            <p className="text-[var(--fg-secondary)] mb-8 max-w-lg">
+            <p className="text-[var(--fg-secondary)] mb-8 max-w-prose">
               SignBridge is built with accessibility as a core principle — not an
               afterthought. Every interaction is designed to be inclusive.
             </p>
@@ -107,25 +107,25 @@ export function AccessibilitySection() {
             <div className="relative w-full max-w-sm">
               {/* Card grid illustration */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[var(--bg)] border rounded-lg p-5 flex flex-col items-center gap-2.5">
+                <div className="bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-5 flex flex-col items-center gap-2.5">
                   <Keyboard className="h-7 w-7 text-brand-500" />
                   <span className="text-xs font-medium text-[var(--fg-secondary)]">
                     Keyboard
                   </span>
                 </div>
-                <div className="bg-[var(--bg)] border rounded-lg p-5 flex flex-col items-center gap-2.5">
+                <div className="bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-5 flex flex-col items-center gap-2.5">
                   <Eye className="h-7 w-7 text-brand-500" />
                   <span className="text-xs font-medium text-[var(--fg-secondary)]">
                     Vision
                   </span>
                 </div>
-                <div className="bg-[var(--bg)] border rounded-lg p-5 flex flex-col items-center gap-2.5">
+                <div className="bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-5 flex flex-col items-center gap-2.5">
                   <Monitor className="h-7 w-7 text-brand-500" />
                   <span className="text-xs font-medium text-[var(--fg-secondary)]">
                     Screen Reader
                   </span>
                 </div>
-                <div className="bg-[var(--bg)] border rounded-lg p-5 flex flex-col items-center gap-2.5">
+                <div className="bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-5 flex flex-col items-center gap-2.5">
                   <SunMoon className="h-7 w-7 text-brand-500" />
                   <span className="text-xs font-medium text-[var(--fg-secondary)]">
                     Contrast

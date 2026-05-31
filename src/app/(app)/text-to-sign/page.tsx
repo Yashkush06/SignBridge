@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Play, Pause, Info, Volume2, RotateCcw, Check, Sparkles, AlertCircle } from "lucide-react";
+import { StatusIndicator } from "@/components/ui/status-indicator";
+import { Play, Pause, Info, Volume2 } from "lucide-react";
 import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
 import { useAuthStore } from "@/store/auth-store";
 import { historyService } from "@/lib/services/history-service";
@@ -120,16 +120,7 @@ export default function TextToSignPage() {
       <div className="flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold tracking-tight">Text to Sign</h1>
-          {isAnimating ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-500/10 text-brand-500 text-xs font-medium animate-pulse">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
-              Animating
-            </div>
-          ) : (
-            <Badge variant="outline" className="text-[var(--fg-tertiary)] py-0.5">
-              Interactive Mode
-            </Badge>
-          )}
+          <StatusIndicator status={isAnimating ? "processing" : "idle"} />
         </div>
       </div>
 
@@ -140,7 +131,7 @@ export default function TextToSignPage() {
         <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
           
           {/* Video display frame */}
-          <div className="flex-1 bg-[var(--bg-secondary)] rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center relative min-h-[250px] bg-neutral-950/20">
+          <div className="flex-1 bg-neutral-950 rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center relative min-h-[250px]">
             {currentLetter && currentLetter !== " " ? (
               <video
                 ref={videoRef}
@@ -158,7 +149,7 @@ export default function TextToSignPage() {
             )}
 
             {/* Floating indicator tag (Top left) */}
-            <div className="absolute top-4 left-4 min-w-[40px] h-10 bg-[var(--bg-elevated)]/85 backdrop-blur-md rounded-xl flex items-center justify-center font-black text-lg shadow-md text-[var(--fg)] border border-[var(--border)]/80 select-none">
+            <div className="absolute top-4 left-4 min-w-10 h-10 bg-[var(--bg-elevated)] rounded-xl flex items-center justify-center font-black text-lg shadow-md text-[var(--fg)] border border-[var(--border)] select-none">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={currentLetter}
@@ -213,7 +204,7 @@ export default function TextToSignPage() {
                 <Button 
                   size="sm" 
                   variant={isAnimating ? "danger" : "primary"}
-                  className="rounded-xl h-9 px-4 text-xs shadow-sm shadow-brand-500/10"
+                  className="rounded-xl h-9 px-4 text-xs shadow-sm"
                   onClick={isAnimating ? handleStop : handleConvert}
                   disabled={!text.trim() && !isAnimating}
                 >

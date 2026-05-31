@@ -49,7 +49,7 @@ export function DemoPreview() {
           >
             See It In Action
           </h2>
-          <p className="text-[var(--fg-secondary)] text-center max-w-2xl mx-auto mt-3">
+          <p className="text-[var(--fg-secondary)] text-center max-w-prose mx-auto mt-3">
             A real-time look at how SignBridge translates hand gestures into
             readable text.
           </p>
@@ -65,15 +65,15 @@ export function DemoPreview() {
         >
           <div
             id="demo-mockup"
-            className="rounded-xl border shadow-lg overflow-hidden bg-[var(--bg)]"
+            className="rounded-2xl border border-[var(--border)] shadow-lg overflow-hidden bg-[var(--bg)]"
           >
             {/* Window chrome */}
             <div className="flex items-center justify-between px-4 py-2.5 border-b bg-[var(--bg-secondary)]">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-error" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-warning" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-success" />
                 </div>
                 <span className="text-xs text-[var(--fg-tertiary)] ml-2 font-mono">
                   translator — SignBridge
@@ -114,7 +114,7 @@ export function DemoPreview() {
                       y1={landmarks[a].y}
                       x2={landmarks[b].x}
                       y2={landmarks[b].y}
-                      stroke="#10B981"
+                      stroke="var(--color-success)"
                       strokeWidth="1.5"
                       strokeOpacity="0.5"
                     />
@@ -125,7 +125,7 @@ export function DemoPreview() {
                       cx={p.x}
                       cy={p.y}
                       r={i === 0 ? 4 : 3}
-                      fill="#10B981"
+                      fill="var(--color-success)"
                       opacity={0.85}
                     />
                   ))}

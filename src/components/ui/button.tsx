@@ -1,10 +1,11 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { resolveVariant, warnInvalidVariant } from "@/lib/variant";
 import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-[var(--bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-[var(--bg)] transition-[color,background-color,border-color,transform,opacity] duration-[var(--duration-hover)] ease-[var(--ease-standard)] active:scale-[0.98] active:duration-[var(--duration-activate)] motion-reduce:transition-none motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -28,6 +29,15 @@ const buttonVariants = cva(
   }
 );
 
+/** Canonical variant/size vocabularies and defaults (single source of truth, Req 3.1). */
+const BUTTON_VARIANTS = ["primary", "secondary", "ghost", "danger", "outline"] as const;
+const BUTTON_SIZES = ["sm", "md", "lg", "icon"] as const;
+const DEFAULT_VARIANT = "primary" satisfies (typeof BUTTON_VARIANTS)[number];
+const DEFAULT_SIZE = "md" satisfies (typeof BUTTON_SIZES)[number];
+
+type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
+type ButtonSize = (typeof BUTTON_SIZES)[number];
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -37,14 +47,35 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading = false, children, ...props }, ref) => {
+    // Resolve requested variant/size to a known value so an unknown selection
+    // degrades to the default instead of rendering unstyled (Req 3.8). An absent
+    // request (undefined/null) is the normal case and resolves silently to the
+    // default; only a provided-but-unknown value signals the caller.
+    const resolvedVariant = resolveVariant<ButtonVariant>(
+      variant ?? undefined,
+      BUTTON_VARIANTS,
+      DEFAULT_VARIANT,
+      (requested) => {
+        if (requested !== "") warnInvalidVariant(requested, "Button variant");
+      }
+    );
+    const resolvedSize = resolveVariant<ButtonSize>(
+      size ?? undefined,
+      BUTTON_SIZES,
+      DEFAULT_SIZE,
+      (requested) => {
+        if (requested !== "") warnInvalidVariant(requested, "Button size");
+      }
+    );
+
     const Comp = asChild ? React.Fragment : "button";
-    
+
     if (asChild) {
       return (
         <Comp>
           {React.cloneElement(children as React.ReactElement<any>, {
             ref: ref as any,
-            className: cn(buttonVariants({ variant, size, className })),
+            className: cn(buttonVariants({ variant: resolvedVariant, size: resolvedSize, className })),
             ...props,
           })}
         </Comp>
@@ -53,7 +84,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant: resolvedVariant, size: resolvedSize, className }))}
         ref={ref}
         disabled={props.disabled || loading}
         aria-disabled={props.disabled || loading}

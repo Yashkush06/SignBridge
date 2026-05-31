@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useReducer, useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -20,19 +21,27 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Search, Download, Trash2, Eye, Clock, Clipboard, Check, Filter } from "lucide-react";
+import { Search, Download, Trash2, Eye, Clock, Clipboard, Check, Filter, AlertCircle } from "lucide-react";
 import { historyService } from "@/lib/services/history-service";
 import type { HistoryEntry } from "@/lib/ml/types";
 import { exportService } from "@/lib/services/export-service";
 import { useAuthStore } from "@/store/auth-store";
+import { asyncReducer, initialAsyncState } from "@/lib/async-state";
 
 export default function HistoryPage() {
   const { user } = useAuthStore();
-  const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const [state, dispatch] = useReducer(
+    asyncReducer<HistoryEntry[]>,
+    initialAsyncState<HistoryEntry[]>()
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Derived view of the async surface state.
+  const entries = state.data ?? [];
+  const isLoading = state.phase === "loading";
+  const errorMessage = state.phase === "error" ? state.message : null;
 
   // Dialog State
   const [activeEntry, setActiveEntry] = useState<HistoryEntry | null>(null);
@@ -46,19 +55,28 @@ export default function HistoryPage() {
 
   const loadHistory = async () => {
     if (!user?.id) return;
-    setIsLoading(true);
-    let data = await historyService.getAll(user.id);
-    
-    if (searchQuery) {
-      data = await historyService.search(user.id, searchQuery);
+    dispatch({ type: "load" });
+    try {
+      let data = await historyService.getAll(user.id);
+
+      if (searchQuery) {
+        data = await historyService.search(user.id, searchQuery);
+      }
+
+      if (selectedType !== "all") {
+        data = data.filter(e => e.type === selectedType);
+      }
+
+      dispatch({ type: "success", data });
+    } catch (error) {
+      dispatch({
+        type: "failure",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to load translation logs. Please try again.",
+      });
     }
-    
-    if (selectedType !== "all") {
-      data = data.filter(e => e.type === selectedType);
-    }
-    
-    setEntries(data);
-    setIsLoading(false);
   };
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,6 +189,30 @@ export default function HistoryPage() {
           )}
         </div>
 
+        {/* Labeled error banner — retains previously loaded content (Req 8.6) */}
+        {errorMessage && entries.length > 0 && (
+          <div
+            role="alert"
+            className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)] bg-error/5 shrink-0"
+          >
+            <AlertCircle className="w-4 h-4 text-error shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-[var(--fg)]">
+                Failed to refresh translation logs
+              </p>
+              <p className="text-[11px] text-[var(--fg-secondary)] truncate">{errorMessage}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadHistory}
+              className="text-[10px] h-7 px-2.5 font-semibold border-[var(--border)] text-[var(--fg-secondary)] shrink-0"
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+
         {/* Notion/Linear tabular view */}
         <div className="flex-1 overflow-auto scrollbar-thin min-h-[300px]">
           <table className="w-full text-xs text-left border-collapse">
@@ -196,11 +238,60 @@ export default function HistoryPage() {
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
               {isLoading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={`skeleton-${i}`} aria-hidden="true">
+                    <td className="p-4">
+                      <div className="flex items-center justify-center">
+                        <Skeleton className="w-3.5 h-3.5 rounded" />
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <Skeleton className="h-4 w-24" />
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <Skeleton className="h-4 w-12" />
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <div className="flex justify-center">
+                        <Skeleton className="h-4 w-6" />
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <Skeleton className="h-4 w-48" />
+                    </td>
+                    <td className="px-6 py-3.5 pr-6">
+                      <div className="flex justify-end gap-1.5">
+                        <Skeleton className="w-7 h-7 rounded-md" />
+                        <Skeleton className="w-7 h-7 rounded-md" />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : errorMessage && entries.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-[var(--fg-tertiary)] font-medium">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 rounded-full border border-brand-500 border-t-transparent animate-spin" />
-                      Loading logs history...
+                  <td colSpan={7} className="px-6 py-16 text-center">
+                    <div
+                      role="alert"
+                      className="flex flex-col items-center justify-center gap-3"
+                    >
+                      <AlertCircle className="w-10 h-10 text-error" />
+                      <div className="space-y-1">
+                        <p className="font-semibold text-sm text-[var(--fg)]">
+                          Failed to load translation logs
+                        </p>
+                        <p className="text-xs text-[var(--fg-secondary)]">{errorMessage}</p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={loadHistory}
+                        className="text-xs h-8 font-semibold border-[var(--border)] text-[var(--fg-secondary)]"
+                      >
+                        Try again
+                      </Button>
                     </div>
                   </td>
                 </tr>

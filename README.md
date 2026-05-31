@@ -1,128 +1,160 @@
-# 🤟 SignBridge
+# SignBridge
 
 <div align="center">
-  <img src="SignBridgelogo.png" alt="SignBridge Logo" width="400" />
-  <p><strong>Bridging the gap between spoken language and sign language in real-time.</strong></p>
+  <img src="public/SignBridgelogo.png" alt="SignBridge Logo" width="200" />
+  <br />
+  <strong>Real-time ASL translation — no account, no server, no compromise.</strong>
+  <br /><br />
 
-  [![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
-  [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-38BDF8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-  [![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.0-F00F3E?style=for-the-badge&logo=framer)](https://www.framer.com/motion/)
-  [![MediaPipe](https://img.shields.io/badge/Google_MediaPipe-Tasks-00C5CD?style=for-the-badge)](https://developers.google.com/mediapipe)
+  [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?logo=tailwindcss)](https://tailwindcss.com/)
+  [![Framer Motion](https://img.shields.io/badge/Framer_Motion-12-F00F3E?logo=framer)](https://www.framer.com/motion/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 </div>
 
 ---
 
-## 🌟 Introduction
+## What is SignBridge?
 
-**SignBridge** is a modern, accessible, and high-performance translation platform designed to break down communication barriers. By leveraging cutting-edge web technologies, including browser-native webcam APIs, **Google MediaPipe Hands**, and modern AI architectures, SignBridge translates American Sign Language (ASL) into written/spoken English—and vice versa—in real time.
+SignBridge is an accessibility platform that translates American Sign Language (ASL) in real time — directly in the browser, with no backend, no account required, and no data leaving your device.
 
-The entire application features a premium, unified dark mode dashboard layout designed to run completely on a single viewport without vertical scrolling.
-
----
-
-## ✨ Features
-
-### 📹 Live ASL-to-Text Translator
-- **Real-Time Landmark Recognition**: Implements MediaPipe hand tracking to map 21 standard coordinates per hand directly over the webcam feed.
-- **Meet-Style Overlay Controls**: Interactive control bar overlays directly on the camera viewport (Start/Stop Video, Pause, Clear, Export Transcript).
-- **Responsive Layout**: Designed as a single-screen dashboard space with 100% viewport locking to eliminate annoying scrolling.
-- **Dynamic Confidence Indicators**: Renders real-time feedback with dynamic progress meters indicating AI prediction confidence.
-
-### 🔠 Text-to-ASL Spell-Out
-- **Letter-by-Letter Video Playback**: Smoothly translates text sentences into a continuous stream of ASL letter animations.
-- **Chat-Style Sentence Builder**: Centered 80px chat input container for typing full phrases instantly.
-- **A-Z Interactive Glossary Sidebar**: A compact sidebar keyboard layout that displays letter visuals.
-- **Spring Active Key Framing**: Utilizing `framer-motion`'s shared layout layoutId transitions, a vibrant orange tracking background slides fluidly from letter to letter on the keyboard as the spelling animation plays in real time.
-
-### 🎙️ Voice-to-ASL Translator
-- **Web Speech API Recognition**: Listens to spoken words in real time with resilient error handling and automatic retry on silent pauses.
-- **Transcription Waveforms**: Responsive audio level animation visualizers displaying microphone input levels.
-- **Instant Letter Sequencing**: Auto-converts spoken results directly into ASL letter flows.
-
-### 🔒 100% Offline, Private, and Account-Free
-- **No Login / Account Restraints**: Completely free and guest-friendly out of the box. No login pages, pricing matrices, or usage bounds.
-- **Local History Service**: Session logs and translations are stored and managed directly in your browser's local storage.
+It runs a trained neural network on top of Google MediaPipe hand landmarks to classify ASL letters from your webcam feed. The reverse direction (text/voice → ASL) plays back pre-recorded letter videos in sequence.
 
 ---
 
-## 🛠️ Technology Stack
+## Features
 
-| Technology | Purpose | Key Advantages |
-| :--- | :--- | :--- |
-| **Next.js 16 (App Router)** | Framework | File-based App Router, React Server Components, and optimized static rendering. |
-| **Tailwind CSS v4** | Styling | Next-gen PostCSS CSS-variable configurations (`@theme`) for instantaneous, highly responsive dark/light utility styles. |
-| **Framer Motion 12** | Animation | Advanced physics-based spring transitions, layout animations, and entry effects. |
-| **Google MediaPipe Hands** | ML Processing | Ultra-low latency CPU/GPU hand gesture classification directly inside standard browser environments. |
-| **Radix UI** | Core Components | WAI-ARIA compliant accessible primitive building blocks (Dialog, Dropdown, Tabs, etc.). |
-| **Zustand** | State Store | Light-weight reactive store for interface states, user preferences, and theme routing. |
-| **Recharts** | Data Analytics | SVG chart widgets summarizing historical speed, accuracy, and vocabulary sizing metrics. |
+### ASL → Text (Live Translator)
+- Webcam feed with MediaPipe 21-point hand landmark overlay
+- Neural network classifier running fully client-side via TensorFlow.js
+- Real-time confidence meter per prediction
+- Transcript export
+
+### Text → ASL
+- Type any phrase and watch it spelled out letter-by-letter via ASL video clips
+- Interactive A–Z glossary sidebar with spring-animated active key indicator
+- Adjustable playback speed
+
+### Voice → ASL
+- Web Speech API transcription with waveform visualizer
+- Spoken words auto-converted to ASL letter sequences
+
+### History & Analytics
+- Session logs stored in browser local storage — nothing sent to a server
+- Recharts-powered analytics: speed, accuracy, and vocabulary metrics over time
+
+### Design
+- Opaque token-based design system (no glassmorphism, no colored shadows)
+- Full dark/light theme support via CSS custom properties
+- Reduced-motion safe — all animations respect `prefers-reduced-motion`
+- WCAG-compliant focus indicators and accessible component names
 
 ---
 
-## 📂 Project Architecture
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 |
+| Animation | Framer Motion 12 |
+| Hand Tracking | Google MediaPipe Tasks Vision |
+| ML Inference | TensorFlow.js |
+| Components | Radix UI primitives |
+| State | Zustand |
+| Charts | Recharts |
+| Testing | Vitest + fast-check + Testing Library |
+| Deployment | Vercel |
+
+---
+
+## Project Structure
 
 ```
-SignBridge/
-├── public/                 # Static visual assets (cropped logo, ASL letter videos A-Z)
-├── scripts/                # Asset processing scripts (OpenCV cropping automation)
-├── tfjs_model/             # Trained TensorFlow.js ASL recognition models
-├── src/
-│   ├── app/                # Next.js App Router route hierarchy
-│   │   ├── (app)/          # Main dashboard routes (translator, text-to-sign, voice-to-sign)
-│   │   ├── (marketing)/    # Minimalist marketing hero and accessibility info pages
-│   │   └── layout.tsx      # Root template wrapping providers and styling
-│   ├── components/         # Modular React Components
-│   │   ├── landing/        # Landing page sections (Hero, Features, Testimonials)
-│   │   ├── layout/         # Shell infrastructure (Sidebar, sticky TopNav, breadcrumbs)
-│   │   └── ui/             # Reusable core primitive library (CVA Buttons, Inputs, Cards)
-│   ├── hooks/              # Custom React utilities (Speech recognition, MediaPipe helpers)
-│   ├── lib/                # Shared utilities (class merger cn, local history services)
-│   └── store/              # App state managers (Zustand layout and theme stores)
+src/
+├── app/
+│   ├── (app)/              # Authenticated app routes
+│   │   ├── translator/     # Live ASL → Text
+│   │   ├── text-to-sign/   # Text → ASL
+│   │   ├── voice-to-sign/  # Voice → ASL
+│   │   ├── history/        # Session history
+│   │   └── analytics/      # Usage analytics
+│   └── (marketing)/        # Landing page
+├── components/
+│   ├── landing/            # Marketing page sections
+│   ├── layout/             # App shell, sidebar, top nav
+│   └── ui/                 # Design system primitives (Button, Card, Badge, etc.)
+├── hooks/                  # Webcam, speech recognition, sign detection
+├── lib/
+│   ├── ml/                 # MediaPipe + TensorFlow.js model providers
+│   ├── motion.ts           # Motion variant catalog
+│   ├── variant.ts          # Variant resolver
+│   ├── async-state.ts      # Async surface state reducer
+│   ├── navigation.ts       # Active nav item selector
+│   └── typography.ts       # Heading scale constants
+└── store/                  # Zustand stores
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-Follow these steps to run the SignBridge dashboard locally on your development machine.
+### Prerequisites
+- Node.js 18+
+- A browser with webcam access (Chrome or Edge recommended for Web Speech API)
 
-### 📋 Prerequisites
-- Ensure you have **Node.js** (v18.x or later recommended) installed.
-- Access to a modern web browser with a webcam.
+### Install & Run
 
-### 🔧 Installation
+```bash
+git clone https://github.com/Yashkush06/SignBridge.git
+cd SignBridge
+npm install
+npm run dev
+```
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Yashkush06/SignBridge.git
-   cd SignBridge
-   ```
+Open [http://localhost:3000](http://localhost:3000).
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+### Run Tests
 
-3. **Start the local development server**:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm test
+```
 
-4. **Open your browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000) to view the application in action.
+Tests include property-based tests (via `fast-check`) for the pure utility functions, unit tests for components, and snapshot tests for the design system primitives.
 
 ---
 
-## 💎 Design and Aesthetics
+## ML Model
 
-SignBridge adheres to strict, modern, and aesthetic design guidelines:
-- **HSL Colors**: Tailored premium color palette utilizing high-contrast dark backgrounds and smooth interactive elements.
-- **Glassmorphism**: Soft background blurs (`backdrop-blur-md`) with ultra-thin border dividing margins.
-- **Dense Space**: High information density optimized for professional tooling without visual clutter.
-- **Animations**: Highly responsive micro-interactions (e.g. spring hover scaling on A-Z keys, active sliding indicator overlays) to enrich user navigation.
+The ASL classifier is a neural network trained on the [ASL Alphabet dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet). It runs entirely in the browser:
+
+1. MediaPipe extracts 21 hand landmarks (x, y, z) per frame
+2. The 63-feature vector is fed to a TensorFlow.js model (`tfjs_model/`)
+3. The top prediction and confidence score are displayed in real time
+
+Training scripts are in `scripts/train-model/` if you want to retrain.
 
 ---
 
-## 📄 License
-This project is open-source and free to distribute under the MIT License.
+## Deployment
+
+The app is deployed on Vercel. No environment variables are required for the core features — everything runs client-side.
+
+If you want to enable Firebase (for cloud history sync), add these to your Vercel project settings:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+NEXT_PUBLIC_FIREBASE_PROJECT_ID
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+NEXT_PUBLIC_FIREBASE_APP_ID
+```
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.
