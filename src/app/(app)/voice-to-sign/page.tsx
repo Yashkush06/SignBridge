@@ -45,6 +45,12 @@ export default function VoiceToSignPage() {
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   const [animationQueue, setAnimationQueue] = useState<string[]>([]);
   const [completedText, setCompletedText] = useState("");
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+  // Reset video loaded state when letter changes to prevent flicker
+  useEffect(() => {
+    setIsVideoLoaded(false);
+  }, [currentLetter]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const animationRef = useRef<NodeJS.Timeout | null>(null);
@@ -403,40 +409,49 @@ export default function VoiceToSignPage() {
 
           {/* Video display */}
           <div className="flex-1 flex items-center justify-center relative">
-            {currentLetter && currentLetter !== " " ? (
-              <>
-                <video
-                  ref={videoRef}
-                  src={`/alphabet/${currentLetter}.mp4`}
-                  className="w-full h-full object-contain"
-                  loop={!isAnimating}
-                  muted
-                  playsInline
-                  autoPlay
-                />
-                {/* Letter overlay */}
-                <div className="absolute top-16 left-4 w-14 h-14 bg-[var(--bg-elevated)] rounded-xl flex items-center justify-center font-bold text-3xl text-[var(--fg)] shadow-md border border-[var(--border)]">
-                  {currentLetter}
-                </div>
-              </>
-            ) : currentLetter === " " ? (
-              <div className="text-center">
-                <div className="text-6xl text-white/20 font-bold mb-2">
-                  ⎵
-                </div>
-                <p className="text-sm text-white/40 uppercase tracking-widest">
-                  Space
-                </p>
+            {/* The video element is ALWAYS mounted to prevent layout shift, flickering, and reload lag */}
+            <video
+              ref={videoRef}
+              src={currentLetter && currentLetter !== " " ? `/alphabet/${currentLetter}.mp4` : undefined}
+              className={cn(
+                "w-full h-full object-contain aspect-[4/3] transition-opacity duration-150",
+                currentLetter && currentLetter !== " " && isVideoLoaded ? "opacity-100" : "opacity-0 absolute pointer-events-none"
+              )}
+              onLoadedMetadata={() => setIsVideoLoaded(true)}
+              loop={!isAnimating}
+              muted
+              playsInline
+              autoPlay
+            />
+
+            {/* Letter overlay */}
+            {currentLetter && currentLetter !== " " && isVideoLoaded && (
+              <div className="absolute top-16 left-4 w-14 h-14 bg-[var(--bg-elevated)] rounded-xl flex items-center justify-center font-bold text-3xl text-[var(--fg)] shadow-md border border-[var(--border)]">
+                {currentLetter}
               </div>
-            ) : (
-              <div className="text-center px-6">
-                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-                  <Hand className="w-8 h-8 text-white/30" />
+            )}
+
+            {/* Space / Pause / Idle display */}
+            {(!currentLetter || currentLetter === " " || !isVideoLoaded) && (
+              currentLetter === " " ? (
+                <div className="text-center">
+                  <div className="text-6xl text-white/20 font-bold mb-2">
+                    ⎵
+                  </div>
+                  <p className="text-sm text-white/40 uppercase tracking-widest">
+                    Space
+                  </p>
                 </div>
-                <p className="text-white/40 text-sm">
-                  ASL signs will appear here as you speak
-                </p>
-              </div>
+              ) : (
+                <div className="text-center px-6">
+                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+                    <Hand className="w-8 h-8 text-white/30" />
+                  </div>
+                  <p className="text-white/40 text-sm">
+                    {currentLetter ? "Loading Sign..." : "ASL signs will appear here as you speak"}
+                  </p>
+                </div>
+              )
             )}
           </div>
 

@@ -20,7 +20,13 @@ export default function TextToSignPage() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentLetter, setCurrentLetter] = useState<string | null>("A"); // Default to A
   const [words, setWords] = useState<string[]>([]);
-  
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+  // Reset video loaded state when letter changes to prevent flicker
+  useEffect(() => {
+    setIsVideoLoaded(false);
+  }, [currentLetter]);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const { speak, stop: stopSpeech, isSpeaking } = useSpeechSynthesis();
   
@@ -132,19 +138,25 @@ export default function TextToSignPage() {
           
           {/* Video display frame */}
           <div className="flex-1 bg-neutral-950 rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center relative min-h-[250px]">
-            {currentLetter && currentLetter !== " " ? (
-              <video
-                ref={videoRef}
-                src={`/alphabet/${currentLetter}.mp4`}
-                className="w-full h-full object-contain"
-                loop={!isAnimating}
-                muted
-                playsInline
-                autoPlay
-              />
-            ) : (
+            {/* The video element is ALWAYS mounted to prevent layout shift, flickering, and reload lag */}
+            <video
+              ref={videoRef}
+              src={currentLetter && currentLetter !== " " ? `/alphabet/${currentLetter}.mp4` : undefined}
+              className={cn(
+                "w-full h-full object-contain aspect-[4/3] transition-opacity duration-150",
+                currentLetter && currentLetter !== " " && isVideoLoaded ? "opacity-100" : "opacity-0 absolute pointer-events-none"
+              )}
+              onLoadedMetadata={() => setIsVideoLoaded(true)}
+              loop={!isAnimating}
+              muted
+              playsInline
+              autoPlay
+            />
+
+            {/* Space / Pause / Idle display */}
+            {(!currentLetter || currentLetter === " " || !isVideoLoaded) && (
               <div className="text-xl text-[var(--fg-tertiary)] font-bold tracking-wider opacity-40 uppercase animate-pulse">
-                [ Space Pause ]
+                {currentLetter === " " ? "[ Space Pause ]" : "[ Loading Sign... ]"}
               </div>
             )}
 
