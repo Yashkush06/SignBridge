@@ -143,7 +143,6 @@ export class AlphabetNNProvider implements SignDetectionProvider {
         })
       );
 
-      // Build hands array for visualization
       const hands: HandDetectionResult[] = results.landmarks.map(
         (landmarks: any[], index: number) => {
           const lms: HandLandmark[] = landmarks.map((lm: any) => ({
@@ -172,6 +171,18 @@ export class AlphabetNNProvider implements SignDetectionProvider {
           return { landmarks: lms, worldLandmarks, handedness, score };
         }
       );
+
+      // ── Override: Check for strict static rule-based gestures (like Space) ──
+      const rulesCheck = classifyGesture(handLandmarks);
+      if (rulesCheck.sign === "Space" && rulesCheck.confidence > 0.8) {
+        this.smoother.clear();
+        return {
+          sign: "Space",
+          confidence: rulesCheck.confidence,
+          hands,
+          timestamp,
+        };
+      }
 
       // ── Classify using the trained NN or fall back to rules ──
       if (this.modelAvailable && this.tfjsModel) {

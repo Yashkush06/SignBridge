@@ -217,10 +217,11 @@ export default function TranslatorPage() {
         if (pct >= 100) {
           // Commit the letter if cooldown has passed
           if (Date.now() - lastCommitTimeRef.current > COMMIT_COOLDOWN_MS) {
-            const letterToAdd = holdLetterRef.current;
-            if (letterToAdd && letterToAdd !== "Unknown") {
+            const rawLetter = holdLetterRef.current;
+            if (rawLetter && rawLetter !== "Unknown") {
+              const letterToAdd = rawLetter === "Space" ? " " : rawLetter;
               setSentenceText((prev) => prev + letterToAdd);
-              setLastCommittedLetter(letterToAdd);
+              setLastCommittedLetter(rawLetter);
               lastCommitTimeRef.current = Date.now();
             }
           }
@@ -523,12 +524,12 @@ export default function TranslatorPage() {
                 />
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center text-[var(--fg-secondary)] p-6 text-center max-w-sm">
-                <div className="w-16 h-16 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center mb-4">
-                  <Camera className="w-7 h-7 text-[var(--fg-tertiary)]" />
+              <div className="flex flex-col items-center justify-center p-6 text-center max-w-sm">
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
+                  <Camera className="w-7 h-7 text-white/50" />
                 </div>
-                <p className="font-semibold text-[var(--fg)] text-base mb-1">Camera is Off</p>
-                <p className="text-xs text-[var(--fg-secondary)] mb-6 text-balance">
+                <p className="font-semibold text-white text-base mb-1">Camera is Off</p>
+                <p className="text-xs text-white/60 mb-6 text-balance">
                   {webcamError || "Turn on your webcam to begin translating American Sign Language in real-time."}
                 </p>
                 <Button onClick={startCamera} variant="primary" className="rounded-full shadow-md">
@@ -587,9 +588,15 @@ export default function TranslatorPage() {
           {/* Compact Sentence Builder Panel */}
           <Card className="shrink-0 p-0 overflow-hidden border-[var(--border)] shadow-sm bg-[var(--bg)] flex flex-col">
             <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
-              <div className="flex items-center gap-1.5">
-                <Type className="w-3.5 h-3.5 text-brand-500" />
-                <span className="font-semibold text-xs text-[var(--fg)]">Current Text</span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <Type className="w-3.5 h-3.5 text-brand-500" />
+                  <span className="font-semibold text-xs text-[var(--fg)]">Current Text</span>
+                </div>
+                <div className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-500/10 border border-brand-200/50 dark:border-brand-500/20 text-[10px] font-medium text-brand-600 dark:text-brand-400">
+                  <span className="text-[10px]">🤟</span> 
+                  <span>Sign &quot;I Love You&quot; for Space</span>
+                </div>
               </div>
               <AnimatePresence mode="wait">
                 {lastCommittedLetter && (

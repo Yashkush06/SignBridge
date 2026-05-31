@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import Image from 'next/image';
+import { Logo } from '@/components/ui/logo';
 
 /* 
   MediaPipe 21 Hand Landmarks absolute coordinates mapped 
@@ -53,15 +53,7 @@ export function Hero() {
             transition={{ duration: 0.4 }}
             className="mb-6 flex justify-center"
           >
-            <Image
-              src="/SignBridgelogo.png"
-              alt="SignBridge Logo"
-              width={200}
-              height={40}
-              className="h-10 w-auto object-contain"
-              priority
-              unoptimized
-            />
+            <Logo size="lg" />
           </motion.div>
 
           {/* Subtle announcement badge */}

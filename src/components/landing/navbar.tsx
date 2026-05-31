@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import Image from 'next/image';
+import { Logo } from '@/components/ui/logo';
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -34,15 +34,7 @@ export function Navbar() {
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <a href="/" id="navbar-logo" className="flex items-center">
-          <Image
-            src="/SignBridgelogo.png"
-            alt="SignBridge"
-            width={140}
-            height={36}
-            className="h-9 w-auto object-contain"
-            priority
-            unoptimized
-          />
+          <Logo size="md" />
         </a>
 
         {/* Desktop links */}

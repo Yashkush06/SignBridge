@@ -9,7 +9,7 @@ import { AccessibilitySection } from "@/components/landing/accessibility";
 import { Testimonials } from "@/components/landing/testimonials";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import Link from "next/link";
-import Image from "next/image";
+import { Logo } from "@/components/ui/logo";
 
 export default function LandingPage() {
   return (
@@ -78,14 +78,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           <div className="col-span-2">
             <Link href="/" className="flex items-center mb-4">
-              <Image
-                src="/SignBridgelogo.png"
-                alt="SignBridge"
-                width={1536}
-                height={1024}
-                className="h-auto w-[150px]"
-                unoptimized
-              />
+              <Logo size="md" />
             </Link>
             <p className="text-[var(--fg-secondary)] text-sm max-w-xs leading-relaxed">
               Making communication accessible for everyone through advanced, browser-based AI translation.

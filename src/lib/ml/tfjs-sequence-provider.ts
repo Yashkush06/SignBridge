@@ -16,6 +16,7 @@ import type {
   HandDetectionResult,
   HandLandmark,
 } from "./types";
+import { classifyGesture } from "./gesture-classifier";
 
 const SEQ_LEN = 30;
 const NUM_LANDMARKS = 21;
@@ -196,6 +197,21 @@ export class TFJSSequenceProvider implements SignDetectionProvider {
           return { landmarks: lms, worldLandmarks, handedness, score };
         }
       );
+
+      // ── Override: Check for strict static rule-based gestures (like Space) ──
+      const rulesCheck = classifyGesture(handLandmarks);
+      if (rulesCheck.sign === "Space" && rulesCheck.confidence > 0.8) {
+        // Clear buffer so we don't accidentally predict a word while spacing
+        this.frameBuffer = [];
+        this.handPresentCount = 0;
+        this.lastPrediction = { sign: "Space", confidence: rulesCheck.confidence };
+        return {
+          sign: "Space",
+          confidence: rulesCheck.confidence,
+          hands,
+          timestamp,
+        };
+      }
 
       // Run LSTM inference when we have enough frames
       this.framesSinceLastPrediction++;

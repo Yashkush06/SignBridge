@@ -21,8 +21,8 @@ const DEFAULT_GUEST_USER: UserProfile = {
   preferences: {
     theme: "system",
     language: "en-US",
-    detectionModel: "mediapipe",
-    confidenceThreshold: 0.7,
+    detectionModel: "alphabet-nn",
+    confidenceThreshold: 0.65,
     autoSpeak: false,
     showLandmarks: true
   }

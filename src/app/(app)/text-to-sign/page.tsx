@@ -114,7 +114,7 @@ export default function TextToSignPage() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col gap-4 max-w-[1400px] mx-auto h-[calc(100vh-100px)] overflow-hidden"
+      className="flex flex-col h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4"
     >
       {/* Header Row */}
       <div className="flex items-center justify-between shrink-0">

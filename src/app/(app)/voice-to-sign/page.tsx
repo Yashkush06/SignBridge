@@ -198,66 +198,71 @@ export default function VoiceToSignPage() {
   const queueWordCount = animationQueue.length;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          <span className="text-brand-500">Voice</span> to Sign Language
-        </h1>
-        <p className="text-[var(--fg-secondary)] mt-1">
-          Speak into your microphone — your words will be translated into ASL
-          letter-by-letter in real time.
-        </p>
-      </div>
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] max-w-5xl mx-auto p-4 md:p-6 gap-4">
+      {/* Header & Controls Row */}
+      <div className="flex items-center justify-between shrink-0 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+        <div>
+          <h1 className="text-xl md:text-2xl font-semibold tracking-tight">
+            <span className="text-brand-500">Voice</span> to Sign Language
+          </h1>
+          <p className="text-[var(--fg-secondary)] mt-1 text-xs md:text-sm">
+            Speak into your microphone to translate words into ASL.
+          </p>
+        </div>
 
-      {/* Microphone Control */}
-      <div className="flex flex-col items-center py-6">
-        <button
-          onClick={isListening ? handleStopListening : startListening}
-          className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl ${
-            isListening
-              ? "bg-error text-white"
-              : "bg-brand-500 text-white hover:bg-brand-600 hover:scale-105"
-          }`}
-        >
-          {isListening ? (
-            <>
-              <div className="absolute inset-0 bg-error rounded-full animate-ping opacity-30"></div>
-              <MicOff className="w-8 h-8 relative z-10" />
-            </>
-          ) : (
-            <Mic className="w-8 h-8" />
+        {/* Compact Microphone Control */}
+        <div className="flex items-center gap-4">
+          {error && (
+            <span className="hidden md:block text-xs text-error font-medium max-w-[200px] truncate">
+              {error}
+            </span>
           )}
-        </button>
-        <p className="mt-4 text-sm font-medium text-[var(--fg-secondary)] uppercase tracking-widest">
-          {isListening ? "Listening..." : "Tap to speak"}
-        </p>
 
-        {/* Waveform visualization */}
-        {isListening && (
-          <div className="flex items-center gap-1.5 mt-3 h-6">
-            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-              <div
-                key={i}
-                className="w-1 bg-brand-500 rounded-full"
-                style={{
-                  height: `${12 + Math.random() * 88}%`,
-                  animation: `pulse ${0.4 + Math.random() * 0.6}s ease-in-out infinite alternate`,
-                }}
-              />
-            ))}
+          {/* Waveform visualization */}
+          {isListening && !error && (
+            <div className="hidden md:flex items-center gap-1 h-4 mr-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="w-1 bg-brand-500 rounded-full"
+                  style={{
+                    height: `${12 + Math.random() * 88}%`,
+                    animation: `pulse ${0.4 + Math.random() * 0.6}s ease-in-out infinite alternate`,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:block text-xs font-semibold text-[var(--fg-tertiary)] uppercase tracking-wider">
+              {isListening ? "Listening" : "Tap to Speak"}
+            </span>
+            <button
+              onClick={isListening ? handleStopListening : startListening}
+              className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
+                isListening
+                  ? "bg-error text-white hover:bg-error/90 hover:scale-105"
+                  : "bg-brand-500 text-white hover:bg-brand-600 hover:scale-105"
+              }`}
+            >
+              {isListening ? (
+                <>
+                  <div className="absolute inset-0 bg-error rounded-full animate-ping opacity-30"></div>
+                  <Mic className="w-5 h-5 relative z-10" />
+                </>
+              ) : (
+                <Mic className="w-5 h-5" />
+              )}
+            </button>
           </div>
-        )}
-
-        {error && (
-          <p className="mt-3 text-sm text-error font-medium">{error}</p>
-        )}
+        </div>
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="flex-1 grid md:grid-cols-2 gap-4 min-h-0">
         {/* Left: Transcription Panel */}
-        <Card className="flex flex-col min-h-[420px]">
+        <Card className="flex flex-col min-h-0 border-[var(--border)] shadow-sm">
           <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Type className="w-4 h-4 text-[var(--fg-tertiary)]" />
@@ -364,7 +369,7 @@ export default function VoiceToSignPage() {
         </Card>
 
         {/* Right: ASL Video Display */}
-        <Card className="flex flex-col min-h-[420px] bg-black overflow-hidden relative">
+        <Card className="flex flex-col min-h-0 bg-black overflow-hidden relative border-[var(--border)] shadow-sm">
           {/* Top badges */}
           <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
             <Badge

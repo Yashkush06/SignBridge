@@ -59,7 +59,7 @@ export type ASLSign = (typeof ASL_ALPHABET)[number];
 
 export const COMMON_SIGNS = [
   "Hello", "Thank You", "Please", "Sorry", "Yes", "No",
-  "Help", "Stop", "Love", "Friend",
+  "Help", "Stop", "Love", "Friend", "Space"
 ] as const;
 
 export type CommonSign = (typeof COMMON_SIGNS)[number];

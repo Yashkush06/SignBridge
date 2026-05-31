@@ -52,7 +52,7 @@ export const useTranslatorStore = create<TranslatorState>((set) => ({
     })),
   clearDetections: () => set({ detections: [], currentSign: "Unknown", confidence: 0 }),
 
-  selectedModel: "mediapipe",
+  selectedModel: "alphabet-nn",
   setSelectedModel: (selectedModel) => set({ selectedModel }),
 
   fps: 0,

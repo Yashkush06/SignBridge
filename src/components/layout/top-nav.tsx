@@ -5,11 +5,17 @@ import { useTheme } from "next-themes";
 import { useAppStore } from "@/store/app-store";
 import { Menu, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 export function TopNav() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useAppStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Extract current page name from pathname
   const pageName = pathname.split("/")[1] || "Translator";
@@ -41,10 +47,14 @@ export function TopNav() {
           className="w-8 h-8 p-0"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
-          {theme === "dark" ? (
-            <Sun className="h-4 w-4" />
+          {mounted ? (
+            theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )
           ) : (
-            <Moon className="h-4 w-4" />
+            <div className="h-4 w-4" />
           )}
           <span className="sr-only">Toggle theme</span>
         </Button>

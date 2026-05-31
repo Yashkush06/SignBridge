@@ -311,6 +311,11 @@ export function classifyGesture(landmarks: HandLandmark[]): ClassificationResult
     return { sign: "Y", confidence: 0.86 };
   }
 
+  // ── Space: Thumb, Index, and Pinky extended, Middle and Ring curled (Spider-Man/ILY) ──
+  if (tE && iE && !mE && !rE && pE) {
+    return { sign: "Space", confidence: 0.88 };
+  }
+
   // ── X: Index finger hooked (DIP bent, rest curled) ──
   if (!mE && !rE && !pE) {
     // Index is partially extended — PIP is up but DIP/tip curled down

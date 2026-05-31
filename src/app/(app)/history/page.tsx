@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -12,7 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Download, Trash2, Eye, Filter, Clock } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Search, Download, Trash2, Eye, Clock, Clipboard, Check, Filter } from "lucide-react";
 import { historyService } from "@/lib/services/history-service";
 import type { HistoryEntry } from "@/lib/ml/types";
 import { exportService } from "@/lib/services/export-service";
@@ -25,6 +33,10 @@ export default function HistoryPage() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+
+  // Dialog State
+  const [activeEntry, setActiveEntry] = useState<HistoryEntry | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -87,141 +99,172 @@ export default function HistoryPage() {
     return `${m}m ${s}s`;
   };
 
+  const handleCopyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
   const getTypeBadge = (type: HistoryEntry["type"]) => {
     switch (type) {
-      case "sign-to-text": return <Badge variant="primary">Sign to Text</Badge>;
-      case "text-to-sign": return <Badge variant="outline">Text to Sign</Badge>;
-      case "voice-to-sign": return <Badge variant="default">Voice to Sign</Badge>;
+      case "sign-to-text":
+        return <Badge variant="primary" className="text-[10px] uppercase font-bold px-2.5">Sign to Text</Badge>;
+      case "text-to-sign":
+        return <Badge variant="outline" className="text-[10px] uppercase font-bold px-2.5 text-success border-success/30 bg-success/5">Text to Sign</Badge>;
+      case "voice-to-sign":
+        return <Badge variant="outline" className="text-[10px] uppercase font-bold px-2.5 text-info border-info/30 bg-info/5">Voice to Sign</Badge>;
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
+    <div className="space-y-6 max-w-6xl mx-auto h-full flex flex-col overflow-y-auto pr-1 pb-6 scrollbar-thin select-none">
+      
+      {/* Header telemetry section */}
+      <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Translation History</h1>
-          <p className="text-[var(--fg-secondary)] mt-1">
-            View and export your previous translation sessions.
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--fg)]">Translation Logs</h1>
+          <p className="text-xs md:text-sm text-[var(--fg-secondary)] mt-0.5">
+            Audit, inspect, and export your previous SignBridge translation sessions.
           </p>
         </div>
       </div>
 
-      <Card className="overflow-hidden">
-        {/* Toolbar */}
-        <div className="p-4 border-b border-[var(--border)] flex flex-col sm:flex-row gap-4 items-center justify-between bg-[var(--bg-secondary)]">
-          <div className="flex-1 w-full sm:max-w-md flex items-center gap-2">
+      <Card className="overflow-hidden border-[var(--border)] shadow-2xs flex-1 flex flex-col min-h-0 bg-[var(--bg)]">
+        {/* Modernized dense Toolbar */}
+        <div className="p-4 border-b border-[var(--border)] flex flex-col sm:flex-row gap-4 items-center justify-between bg-[var(--bg-secondary)]/60 shrink-0">
+          <div className="flex-1 w-full sm:max-w-md flex items-center gap-2.5">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--fg-tertiary)]" />
               <input
                 type="text"
                 placeholder="Search transcripts..."
-                className="w-full pl-9 pr-4 py-2 bg-[var(--bg)] border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-9 pr-4 py-1.5 bg-[var(--bg)] border border-[var(--input-border)] rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-[var(--fg)] placeholder:text-[var(--fg-tertiary)] transition-shadow duration-150"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-[150px] bg-[var(--bg)]">
-                <SelectValue placeholder="Type" />
+              <SelectTrigger className="w-[140px] bg-[var(--bg)] border-[var(--input-border)] text-xs h-[30px] rounded-md font-medium text-[var(--fg-secondary)]">
+                <SelectValue placeholder="All Tools" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="sign-to-text">Sign to Text</SelectItem>
-                <SelectItem value="text-to-sign">Text to Sign</SelectItem>
-                <SelectItem value="voice-to-sign">Voice to Sign</SelectItem>
+                <SelectItem value="all" className="text-xs">All Tools</SelectItem>
+                <SelectItem value="sign-to-text" className="text-xs">Sign to Text</SelectItem>
+                <SelectItem value="text-to-sign" className="text-xs">Text to Sign</SelectItem>
+                <SelectItem value="voice-to-sign" className="text-xs">Voice to Sign</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {selectedItems.size > 0 && (
-            <div className="flex items-center gap-2 w-full sm:w-auto p-2 bg-brand-50 dark:bg-brand-900/20 rounded-md border border-brand-200 dark:border-brand-800">
-              <span className="text-sm font-medium text-brand-700 dark:text-brand-300 px-2">
-                {selectedItems.size} selected
+            <div className="flex items-center gap-2 w-full sm:w-auto p-1.5 bg-brand-50 dark:bg-brand-900/10 rounded-lg border border-brand-100 dark:border-brand-900/50">
+              <span className="text-[10px] font-bold text-brand-600 dark:text-brand-400 px-2 uppercase tracking-wide">
+                {selectedItems.size} Selected
               </span>
-              <Button variant="outline" size="sm" onClick={handleExportSelected} className="bg-[var(--bg)]">
-                <Download className="w-4 h-4 mr-2" /> Export
+              <Button variant="outline" size="sm" onClick={handleExportSelected} className="bg-[var(--bg)] border-[var(--border)] text-xs h-7 px-2.5 font-semibold text-[var(--fg-secondary)]">
+                <Download className="w-3.5 h-3.5 mr-1.5" /> Export
               </Button>
-              <Button variant="danger" size="sm" onClick={handleDeleteSelected}>
-                <Trash2 className="w-4 h-4 mr-2" /> Delete
+              <Button variant="danger" size="sm" onClick={handleDeleteSelected} className="text-xs h-7 px-2.5 font-semibold">
+                <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Delete
               </Button>
             </div>
           )}
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-[var(--fg-secondary)] uppercase bg-[var(--bg-tertiary)] border-b border-[var(--border)]">
+        {/* Notion/Linear tabular view */}
+        <div className="flex-1 overflow-auto scrollbar-thin min-h-[300px]">
+          <table className="w-full text-xs text-left border-collapse">
+            <thead className="text-[10px] font-bold text-[var(--fg-tertiary)] uppercase tracking-wider bg-[var(--bg-secondary)]/30 border-b border-[var(--border)] sticky top-0 backdrop-blur-md">
               <tr>
                 <th scope="col" className="p-4 w-4">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 rounded border-[var(--border)] focus:ring-brand-500 text-brand-500"
-                    onChange={handleSelectAll}
-                    checked={entries.length > 0 && selectedItems.size === entries.length}
-                  />
+                  <div className="flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      className="w-3.5 h-3.5 rounded border-[var(--input-border)] text-brand-500 focus:ring-brand-500/50 focus:ring-offset-0 bg-[var(--bg)] cursor-pointer"
+                      onChange={handleSelectAll}
+                      checked={entries.length > 0 && selectedItems.size === entries.length}
+                    />
+                  </div>
                 </th>
-                <th scope="col" className="px-6 py-3 font-medium">Date</th>
-                <th scope="col" className="px-6 py-3 font-medium">Type</th>
-                <th scope="col" className="px-6 py-3 font-medium">Duration</th>
-                <th scope="col" className="px-6 py-3 font-medium">Phrases</th>
-                <th scope="col" className="px-6 py-3 font-medium min-w-[200px]">Transcript Snippet</th>
-                <th scope="col" className="px-6 py-3 font-medium text-right">Actions</th>
+                <th scope="col" className="px-6 py-3.5 font-bold">Session Date</th>
+                <th scope="col" className="px-6 py-3.5 font-bold">Method</th>
+                <th scope="col" className="px-6 py-3.5 font-bold">Duration</th>
+                <th scope="col" className="px-6 py-3.5 font-bold text-center">Phrases</th>
+                <th scope="col" className="px-6 py-3.5 font-bold min-w-[220px]">Transcription log</th>
+                <th scope="col" className="px-6 py-3.5 font-bold text-right pr-6">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-[var(--fg-secondary)]">
-                    Loading history...
+                  <td colSpan={7} className="px-6 py-12 text-center text-[var(--fg-tertiary)] font-medium">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 rounded-full border border-brand-500 border-t-transparent animate-spin" />
+                      Loading logs history...
+                    </div>
                   </td>
                 </tr>
               ) : entries.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-[var(--fg-secondary)]">
+                  <td colSpan={7} className="px-6 py-16 text-center text-[var(--fg-secondary)]">
                     <div className="flex flex-col items-center justify-center">
-                      <Clock className="w-10 h-10 mb-3 text-[var(--fg-tertiary)]" />
-                      <p>No history found</p>
+                      <Clock className="w-10 h-10 mb-3 text-[var(--fg-muted)] opacity-50" />
+                      <p className="font-semibold text-sm text-[var(--fg)]">No translation logs found</p>
+                      <p className="text-[10px] text-[var(--fg-tertiary)] mt-0.5">Start communicating using our tools to see your logs here.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 entries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
+                  <tr key={entry.id} className="hover:bg-[var(--bg-secondary)]/50 transition-colors duration-150 group">
                     <td className="p-4">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 rounded border-[var(--border)] focus:ring-brand-500 text-brand-500"
-                        checked={selectedItems.has(entry.id)}
-                        onChange={(e) => handleSelectItem(entry.id, e.target.checked)}
-                      />
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          className="w-3.5 h-3.5 rounded border-[var(--input-border)] text-brand-500 focus:ring-brand-500/50 focus:ring-offset-0 bg-[var(--bg)] cursor-pointer"
+                          checked={selectedItems.has(entry.id)}
+                          onChange={(e) => handleSelectItem(entry.id, e.target.checked)}
+                        />
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-[var(--fg)] font-medium">
-                      {new Date(entry.date).toLocaleDateString()}
+                    <td className="px-6 py-3.5 whitespace-nowrap text-[var(--fg)] font-semibold font-mono">
+                      {new Date(entry.date).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3.5 whitespace-nowrap">
                       {getTypeBadge(entry.type)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-[var(--fg-secondary)]">
+                    <td className="px-6 py-3.5 whitespace-nowrap text-[var(--fg-secondary)] font-mono font-medium">
                       {formatDuration(entry.duration)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3.5 whitespace-nowrap text-center text-[var(--fg)] font-bold font-mono">
                       {entry.phraseCount}
                     </td>
-                    <td className="px-6 py-4 text-[var(--fg-secondary)] truncate max-w-[250px]">
-                      {entry.transcript}
+                    <td className="px-6 py-3.5 text-[var(--fg-secondary)] truncate max-w-[280px] font-medium">
+                      &ldquo;{entry.transcript}&rdquo;
                     </td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <Button variant="ghost" size="sm" className="w-8 h-8 p-0" title="View details">
-                        <Eye className="w-4 h-4" />
+                    <td className="px-6 py-3.5 text-right space-x-1.5 whitespace-nowrap pr-6">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-7 h-7 p-0 rounded-md hover:bg-[var(--bg-tertiary)] text-[var(--fg-secondary)] group-hover:text-brand-500 group-hover:bg-brand-500/[0.05] transition-all"
+                        title="View details"
+                        onClick={() => setActiveEntry(entry)}
+                      >
+                        <Eye className="w-3.5 h-3.5" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-error hover:bg-error/10 hover:text-error" onClick={async () => {
-                        if (user?.id) {
-                          await historyService.remove(user.id, entry.id);
-                          loadHistory();
-                        }
-                      }} title="Delete">
-                        <Trash2 className="w-4 h-4" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-7 h-7 p-0 rounded-md text-[var(--fg-tertiary)] hover:bg-error/10 hover:text-error transition-all"
+                        onClick={async () => {
+                          if (user?.id && confirm("Delete this translation log?")) {
+                            await historyService.remove(user.id, entry.id);
+                            loadHistory();
+                          }
+                        }}
+                        title="Delete"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </Button>
                     </td>
                   </tr>
@@ -231,17 +274,109 @@ export default function HistoryPage() {
           </table>
         </div>
         
-        {/* Pagination placeholder */}
+        {/* Pagination bar */}
         {entries.length > 0 && (
-          <div className="p-4 border-t border-[var(--border)] flex items-center justify-between text-sm text-[var(--fg-secondary)]">
-            <span>Showing 1 to {entries.length} of {entries.length} entries</span>
-            <div className="flex gap-1">
-              <Button variant="outline" size="sm" disabled>Previous</Button>
-              <Button variant="outline" size="sm" disabled>Next</Button>
+          <div className="p-4 border-t border-[var(--border)] flex items-center justify-between text-[11px] text-[var(--fg-tertiary)] shrink-0 font-medium bg-[var(--bg-secondary)]/20">
+            <span>Showing 1 to {entries.length} of {entries.length} log records</span>
+            <div className="flex gap-1.5">
+              <Button variant="outline" size="sm" disabled className="h-7 px-2.5 text-[10px] font-bold">Previous</Button>
+              <Button variant="outline" size="sm" disabled className="h-7 px-2.5 text-[10px] font-bold">Next</Button>
             </div>
           </div>
         )}
       </Card>
+
+      {/* Structured Details popover dialog */}
+      <Dialog open={!!activeEntry} onOpenChange={(open) => !open && setActiveEntry(null)}>
+        {activeEntry && (
+          <DialogContent className="max-w-md rounded-xl p-5 border-[var(--border)] bg-[var(--bg-elevated)] shadow-lg animate-in fade-in-0 duration-200">
+            <DialogHeader className="space-y-1 text-left">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-brand-500 uppercase tracking-widest bg-brand-500/10 px-2 py-0.5 rounded">Log Details</span>
+                {getTypeBadge(activeEntry.type)}
+              </div>
+              <DialogTitle className="text-base font-bold text-[var(--fg)] mt-2">
+                Session Record Details
+              </DialogTitle>
+              <DialogDescription className="text-[10px] text-[var(--fg-tertiary)] font-mono">
+                Logged at {new Date(activeEntry.date).toLocaleString()}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="my-4 space-y-4 text-xs">
+              {/* Detailed metrics box */}
+              <div className="grid grid-cols-3 gap-3 p-3 bg-[var(--bg-secondary)]/70 border border-[var(--border)] rounded-lg font-medium text-[var(--fg-secondary)]">
+                <div className="space-y-1 text-center border-r border-[var(--border)]/70">
+                  <span className="text-[9px] font-bold text-[var(--fg-tertiary)] uppercase tracking-wider block">Duration</span>
+                  <span className="font-mono text-sm font-bold text-[var(--fg)]">{activeEntry.duration}s</span>
+                </div>
+                <div className="space-y-1 text-center border-r border-[var(--border)]/70">
+                  <span className="text-[9px] font-bold text-[var(--fg-tertiary)] uppercase tracking-wider block">Words</span>
+                  <span className="font-mono text-sm font-bold text-[var(--fg)]">{activeEntry.phraseCount}</span>
+                </div>
+                <div className="space-y-1 text-center">
+                  <span className="text-[9px] font-bold text-[var(--fg-tertiary)] uppercase tracking-wider block">Accuracy</span>
+                  <span className="font-mono text-sm font-bold text-[var(--fg)]">
+                    {activeEntry.averageConfidence > 0 ? `${Math.round(activeEntry.averageConfidence * 100)}%` : "N/A"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Match accuracy bar */}
+              {activeEntry.averageConfidence > 0 && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] text-[var(--fg-secondary)] font-semibold">
+                    <span>Model Confidence Rating</span>
+                    <span>{Math.round(activeEntry.averageConfidence * 100)}%</span>
+                  </div>
+                  <Progress value={activeEntry.averageConfidence * 100} className="h-1.5 bg-[var(--bg-tertiary)] rounded-full" />
+                </div>
+              )}
+
+              {/* Clean translation content box */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[10px] text-[var(--fg-tertiary)] uppercase tracking-wider font-bold">
+                  <span>Translation Transcript</span>
+                  <button
+                    onClick={() => handleCopyToClipboard(activeEntry.transcript)}
+                    className="flex items-center gap-1 text-[9px] text-brand-500 hover:underline hover:text-brand-600 transition"
+                  >
+                    {isCopied ? (
+                      <><Check className="w-3 h-3" /> Copied!</>
+                    ) : (
+                      <><Clipboard className="w-3 h-3" /> Copy transcript</>
+                    )}
+                  </button>
+                </div>
+                <div className="p-3.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg leading-relaxed text-[var(--fg)] text-xs font-semibold select-text break-words">
+                  &ldquo;{activeEntry.transcript}&rdquo;
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="flex sm:justify-end gap-2 border-t border-[var(--border)]/40 pt-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  exportService.exportHistoryAsCsv([activeEntry]);
+                  setActiveEntry(null);
+                }}
+                className="text-xs h-8 font-semibold border-[var(--border)] text-[var(--fg-secondary)]"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" /> Export CSV
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setActiveEntry(null)}
+                className="text-xs h-8 font-semibold"
+              >
+                Done
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 }
