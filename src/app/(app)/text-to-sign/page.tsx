@@ -137,7 +137,7 @@ export default function TextToSignPage() {
         <div className="flex-1 flex flex-col gap-4 min-h-0 min-w-0">
           
           {/* Video display frame */}
-          <div className="flex-1 bg-neutral-950 rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center relative min-h-[250px]">
+          <div className="w-full flex-1 bg-neutral-950 rounded-2xl overflow-hidden shadow-lg border border-[var(--border)] flex items-center justify-center relative min-h-[250px]">
             {/* The video element is ALWAYS mounted and kept in normal flow to prevent layout collapse */}
             <video
               ref={videoRef}
