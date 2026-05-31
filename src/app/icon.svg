@@ -1,0 +1,23 @@
+<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer connection arch (ASL tracking bridge) in brand color #1F6FEB -->
+  <path
+    d="M6 20C6 12.268 10.4772 7 16 7C21.5228 7 26 12.268 26 20"
+    stroke="#1F6FEB"
+    stroke-width="3"
+    stroke-linecap="round"
+  />
+  <!-- Inner arch with slight opacity -->
+  <path
+    d="M10 23C10 19.134 12.6863 16 16 16C19.3137 16 22 19.134 22 23"
+    stroke="#1F6FEB"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.7"
+  />
+  <!-- Connection nodes representing MediaPipe tracking hand-landmarks -->
+  <circle cx="16" cy="7" r="3" fill="#1F6FEB" />
+  <circle cx="6" cy="20" r="2.5" fill="#3b82f6" />
+  <circle cx="26" cy="20" r="2.5" fill="#3b82f6" />
+  <circle cx="10" cy="23" r="2" fill="#1d4ed8" />
+  <circle cx="22" cy="23" r="2" fill="#1d4ed8" />
+</svg>
